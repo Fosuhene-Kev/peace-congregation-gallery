@@ -46,6 +46,7 @@
 
   /* App shell */
   --app-sidebar-width: 18rem;
+  --app-mobile-nav-height: 4.25rem;
 }
 
 .dark {
@@ -128,8 +129,15 @@
   * {
     @apply border-border outline-ring/50;
   }
+  html {
+    height: 100%;
+    overflow: hidden;
+  }
   body {
     @apply bg-background text-foreground;
+    height: 100%;
+    overflow: hidden;
+    overscroll-behavior: none;
   }
 }
 
@@ -156,10 +164,32 @@
   animation: shimmer 1.5s infinite;
 }
 
-/* App layout: smooth scrolling in main content */
+/* Single scroll container — avoids double-scroll on mobile browsers */
+.app-viewport {
+  height: 100dvh;
+  max-height: 100dvh;
+}
+
+@supports not (height: 100dvh) {
+  .app-viewport {
+    height: 100vh;
+    max-height: 100vh;
+  }
+}
+
 .app-main-scroll {
-  scroll-behavior: smooth;
   -webkit-overflow-scrolling: touch;
+  overscroll-behavior-y: contain;
+  touch-action: pan-y;
+}
+
+html.lightbox-open,
+html.lightbox-open body {
+  overflow: hidden;
+}
+
+html.lightbox-open .app-main-scroll {
+  overflow: hidden !important;
 }
 
 .masonry-grid {

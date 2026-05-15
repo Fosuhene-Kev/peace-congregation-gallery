@@ -26,11 +26,11 @@ interface AppShellProps {
 
 export function AppShell({ activeView, onViewChange, children }: AppShellProps) {
   return (
-    <div className="flex min-h-dvh bg-background">
+    <div className="app-viewport flex w-full overflow-hidden bg-background">
       <DesktopSidebar activeView={activeView} onViewChange={onViewChange} />
-      <div className="flex min-h-dvh flex-1 flex-col md:pl-[var(--app-sidebar-width)]">
+      <div className="flex h-full min-h-0 min-w-0 flex-1 flex-col md:pl-[var(--app-sidebar-width)]">
         <MobileTopBar />
-        <main className="app-main-scroll flex-1 overflow-y-auto overscroll-y-contain px-4 pb-24 pt-4 sm:px-6 md:pb-6 md:pt-6">
+        <main className="app-main-scroll min-h-0 flex-1 overflow-x-hidden overflow-y-auto px-4 pt-4 pb-[calc(var(--app-mobile-nav-height)+1rem+env(safe-area-inset-bottom,0px))] sm:px-6 md:pb-6 md:pt-6">
           {children}
         </main>
         <MobileBottomNav activeView={activeView} onViewChange={onViewChange} />
@@ -150,7 +150,7 @@ function DesktopSidebar({
 
 function MobileTopBar() {
   return (
-    <header className="sticky top-0 z-30 flex items-center justify-between border-b border-border bg-background/95 px-4 py-3 backdrop-blur-md md:hidden">
+    <header className="z-30 flex shrink-0 items-center justify-between border-b border-border bg-background/95 px-4 py-3 backdrop-blur-md md:hidden">
       <BrandMark compact />
       <p className="text-[10px] uppercase tracking-widest text-muted-foreground">
         Media App

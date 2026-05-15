@@ -155,14 +155,13 @@ export function GalleryClient() {
   }, [lightboxOpen, handleLightboxNext, handleLightboxPrev])
 
   useEffect(() => {
+    const root = document.documentElement
     if (lightboxOpen) {
-      document.body.style.overflow = "hidden"
+      root.classList.add("lightbox-open")
     } else {
-      document.body.style.overflow = ""
+      root.classList.remove("lightbox-open")
     }
-    return () => {
-      document.body.style.overflow = ""
-    }
+    return () => root.classList.remove("lightbox-open")
   }, [lightboxOpen])
 
   const showGallery = activeView === "home" || activeView === "events"
