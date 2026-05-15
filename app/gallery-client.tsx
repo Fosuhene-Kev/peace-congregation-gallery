@@ -2,11 +2,62 @@
 
 import { useState, useEffect, useCallback, useMemo } from "react"
 import { useSearchParams, useRouter } from "next/navigation"
-import { Header } from "@/components/gallery/header"
+import { AppShell } from "@/components/gallery/app-shell"
 import { EventSelector } from "@/components/gallery/event-selector"
 import { PhotoGrid } from "@/components/gallery/photo-grid"
 import { Lightbox } from "@/components/gallery/lightbox"
-import { churchGalleryData } from "@/lib/gallery-data"
+import { SermonsPlaceholder } from "@/components/gallery/sermons-placeholder"
+import { NotificationsPanel } from "@/components/gallery/notifications-panel"
+import { churchGalleryData, type GalleryEvent } from "@/lib/gallery-data"
+import { isAppView, type AppView } from "@/lib/navigation"
+
+function formatEventDate(dateString: string) {
+  return new Date(dateString).toLocaleDateString("en-US", {
+    weekday: "long",
+    month: "long",
+    day: "numeric",
+    year: "numeric",
+  })
+}
+
+function GalleryStrip({ event }: { event: GalleryEvent }) {
+  return (
+    <div className="mb-4 flex flex-col gap-1 border-b border-border pb-4 sm:mb-6">
+      <h1 className="text-lg font-semibold text-foreground sm:text-xl">
+        {event.eventName}
+      </h1>
+      <p className="text-sm text-muted-foreground">
+        {formatEventDate(event.eventDate)}
+      </p>
+      <p className="mt-1 max-w-2xl text-sm leading-relaxed text-muted-foreground">
+        {event.description}
+      </p>
+    </div>
+  )
+}
+
+function EmptyGallery() {
+  return (
+    <div className="py-16 text-center">
+      <div className="mb-4 inline-flex h-16 w-16 items-center justify-center rounded-full bg-muted">
+        <svg
+          className="h-8 w-8 text-muted-foreground"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
+        >
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth={1.5}
+            d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
+          />
+        </svg>
+      </div>
+      <p className="text-muted-foreground">No photos available for this event yet.</p>
+    </div>
+  )
+}
 
 export function GalleryClient() {
   const searchParams = useSearchParams()
@@ -18,6 +69,11 @@ export function GalleryClient() {
     )
   }, [])
 
+  const activeView: AppView = useMemo(() => {
+    const view = searchParams.get("view")
+    return isAppView(view) ? view : "home"
+  }, [searchParams])
+
   const getInitialEvent = useCallback(() => {
     const urlEventId = searchParams.get("event")
     if (urlEventId) {
@@ -27,9 +83,15 @@ export function GalleryClient() {
     return sortedEvents[0]
   }, [searchParams, sortedEvents])
 
-  const [activeEvent, setActiveEvent] = useState(getInitialEvent)
+  const [activeEvent, setActiveEvent] = useState<GalleryEvent | undefined>(
+    getInitialEvent
+  )
   const [lightboxOpen, setLightboxOpen] = useState(false)
   const [lightboxIndex, setLightboxIndex] = useState(0)
+
+  useEffect(() => {
+    setActiveEvent(getInitialEvent())
+  }, [getInitialEvent])
 
   const activePhotos = useMemo(() => {
     return churchGalleryData.photos.filter(
@@ -37,15 +99,33 @@ export function GalleryClient() {
     )
   }, [activeEvent])
 
+  const updateUrl = useCallback(
+    (view: AppView, eventId?: string) => {
+      const params = new URLSearchParams()
+      if (view !== "home") params.set("view", view)
+      if (eventId) params.set("event", eventId)
+      const query = params.toString()
+      router.push(query ? `?${query}` : "/", { scroll: false })
+    },
+    [router]
+  )
+
+  const handleViewChange = useCallback(
+    (view: AppView) => {
+      updateUrl(view, activeEvent?.eventId)
+    },
+    [updateUrl, activeEvent?.eventId]
+  )
+
   const handleEventSelect = useCallback(
     (eventId: string) => {
       const event = sortedEvents.find((e) => e.eventId === eventId)
       if (event) {
         setActiveEvent(event)
-        router.push(`?event=${eventId}`, { scroll: false })
+        updateUrl(activeView === "home" ? "home" : "events", eventId)
       }
     },
-    [sortedEvents, router]
+    [sortedEvents, updateUrl, activeView]
   )
 
   const handlePhotoClick = useCallback((index: number) => {
@@ -85,50 +165,54 @@ export function GalleryClient() {
     }
   }, [lightboxOpen])
 
+  const showGallery = activeView === "home" || activeView === "events"
+
   return (
-    <main className="min-h-screen bg-background">
-      <Header activeEvent={activeEvent} />
+    <AppShell activeView={activeView} onViewChange={handleViewChange}>
+      {activeView === "events" && (
+        <div className="mx-auto mb-6 max-w-3xl">
+          <h2 className="mb-1 text-lg font-semibold text-foreground">Events</h2>
+          <p className="mb-4 text-sm text-muted-foreground">
+            Choose a program to browse its photo album.
+          </p>
+          <EventSelector
+            events={sortedEvents}
+            activeEventId={activeEvent?.eventId || ""}
+            onEventSelect={handleEventSelect}
+          />
+        </div>
+      )}
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-        <EventSelector
-          events={sortedEvents}
-          activeEventId={activeEvent?.eventId || ""}
-          onEventSelect={handleEventSelect}
-        />
+      {activeView === "sermons" && <SermonsPlaceholder />}
 
-        {activeEvent && (
-          <div className="mt-6 mb-8">
-            <p className="text-muted-foreground text-center max-w-2xl mx-auto text-pretty">
-              {activeEvent.description}
-            </p>
-          </div>
-        )}
+      {activeView === "notifications" && <NotificationsPanel />}
 
-        <PhotoGrid photos={activePhotos} onPhotoClick={handlePhotoClick} />
-
-        {activePhotos.length === 0 && (
-          <div className="text-center py-16">
-            <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-muted mb-4">
-              <svg
-                className="w-8 h-8 text-muted-foreground"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={1.5}
-                  d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
-                />
-              </svg>
+      {showGallery && activeEvent && (
+        <div className="mx-auto w-full max-w-7xl">
+          {activeView === "home" ? (
+            <div className="mb-3 flex items-baseline justify-between gap-2 border-b border-border/60 pb-3">
+              <h1 className="text-base font-semibold text-foreground sm:text-lg">
+                {activeEvent.eventName}
+              </h1>
+              <p className="shrink-0 text-xs text-muted-foreground">
+                {new Date(activeEvent.eventDate).toLocaleDateString("en-US", {
+                  month: "short",
+                  day: "numeric",
+                  year: "numeric",
+                })}
+              </p>
             </div>
-            <p className="text-muted-foreground">
-              No photos available for this event yet.
-            </p>
-          </div>
-        )}
-      </div>
+          ) : (
+            <GalleryStrip event={activeEvent} />
+          )}
+
+          {activePhotos.length > 0 ? (
+            <PhotoGrid photos={activePhotos} onPhotoClick={handlePhotoClick} />
+          ) : (
+            <EmptyGallery />
+          )}
+        </div>
+      )}
 
       {lightboxOpen && activePhotos.length > 0 && (
         <Lightbox
@@ -139,19 +223,6 @@ export function GalleryClient() {
           onPrev={handleLightboxPrev}
         />
       )}
-
-      <footer className="border-t border-border bg-card mt-12">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-          <div className="text-center">
-            <p className="text-sm text-muted-foreground">
-              Presbyterian Church of Ghana, Peace Congregation — Bronkong-Afrancho
-            </p>
-            <p className="text-xs text-muted-foreground mt-2">
-              © {new Date().getFullYear()} All Rights Reserved
-            </p>
-          </div>
-        </div>
-      </footer>
-    </main>
+    </AppShell>
   )
 }

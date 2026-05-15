@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import { Geist, Geist_Mono } from 'next/font/google'
 import { Analytics } from '@vercel/analytics/next'
+import { SITE_TITLE } from '@/lib/navigation'
 import './globals.css'
 
 const _geist = Geist({ subsets: ["latin"] });
@@ -12,18 +13,18 @@ const siteUrl =
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
-  title: "PCG Peace Congregation Gallery | Bronkong-Afrancho",
+  title: SITE_TITLE,
   description:
-    "Official photo archive of Presbyterian Church of Ghana, Peace Congregation — Bronkong-Afrancho. View and download photos from church events and celebrations.",
+    "Official photo archive of PCG Peace Congregation, Bronkong-Afrancho. View and download photos from church events and celebrations.",
   openGraph: {
-    title: "PCG Peace Congregation Gallery | Bronkong-Afrancho",
+    title: SITE_TITLE,
     description:
       "View and download photos from church events and celebrations at Peace Congregation, Bronkong-Afrancho.",
     type: "website",
   },
   twitter: {
     card: "summary_large_image",
-    title: "PCG Peace Congregation Gallery",
+    title: SITE_TITLE,
     description:
       "Photo gallery and media archive — Presbyterian Church of Ghana, Peace Congregation.",
   },

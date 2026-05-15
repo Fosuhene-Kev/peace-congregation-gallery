@@ -43,6 +43,9 @@
   --pcg-red: oklch(0.55 0.2 25);
   --pcg-gold: oklch(0.75 0.15 85);
   --pcg-green: oklch(0.55 0.15 145);
+
+  /* App shell */
+  --app-sidebar-width: 18rem;
 }
 
 .dark {
@@ -151,4 +154,14 @@
 
 .animate-shimmer {
   animation: shimmer 1.5s infinite;
+}
+
+/* App layout: smooth scrolling in main content */
+.app-main-scroll {
+  scroll-behavior: smooth;
+  -webkit-overflow-scrolling: touch;
+}
+
+.masonry-grid {
+  column-fill: balance;
 }
