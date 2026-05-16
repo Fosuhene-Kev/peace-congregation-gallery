@@ -46,8 +46,8 @@
 
   /* App shell */
   --app-sidebar-width: 18rem;
-  --app-mobile-nav-height: 4.25rem;
-  --app-mobile-nav-total: 6.75rem;
+  --app-mobile-nav-height: 3.5rem;
+  --app-mobile-nav-total: 5.25rem;
 }
 
 .dark {
@@ -197,7 +197,7 @@ html.lightbox-open .app-main-scroll {
   column-fill: balance;
 }
 
-/* Premium curved mobile bottom navigation */
+/* Premium curved mobile bottom navigation — flat top + concave scoop dip */
 .mobile-curved-nav {
   position: fixed;
   right: 0;
@@ -209,28 +209,36 @@ html.lightbox-open .app-main-scroll {
 }
 
 .mobile-curved-nav__shell {
+  --nav-scoop-x: calc((var(--nav-active-index) + 0.5) * (100% / 4));
   pointer-events: auto;
   position: relative;
-  margin: 0 0.625rem 0.625rem;
+  margin: 0 0.5rem 0.5rem;
   overflow: visible;
-  border-radius: 1.75rem 1.75rem 1.25rem 1.25rem;
+  border-radius: 0 0 1.25rem 1.25rem;
   background: var(--card);
   min-height: var(--app-mobile-nav-height);
   box-shadow:
-    0 -8px 32px oklch(0.25 0.04 250 / 0.12),
-    0 0 0 1px oklch(0.9 0.01 250 / 0.55);
-}
-
-.mobile-curved-nav__notch {
-  position: absolute;
-  top: -1.65rem;
-  left: calc((var(--nav-active-index) + 0.5) * (100% / 4) - 2.375rem);
-  width: 4.75rem;
-  height: 2.35rem;
-  border-radius: 2.375rem 2.375rem 0 0;
-  background: var(--card);
-  transition: left 0.38s cubic-bezier(0.34, 1.15, 0.64, 1);
-  box-shadow: 0 -3px 12px oklch(0.25 0.04 250 / 0.06);
+    0 -4px 24px oklch(0.25 0.04 250 / 0.1),
+    0 0 0 1px oklch(0.9 0.01 250 / 0.5);
+  /* Concave scoop: transparent hole at top reveals gallery behind the bar */
+  -webkit-mask-image:
+    linear-gradient(#000, #000),
+    radial-gradient(
+      ellipse 2.35rem 1.15rem at var(--nav-scoop-x) 0,
+      transparent 0,
+      transparent 100%,
+      #000 100%
+    );
+  -webkit-mask-composite: destination-out;
+  mask-image:
+    linear-gradient(#000, #000),
+    radial-gradient(
+      ellipse 2.35rem 1.15rem at var(--nav-scoop-x) 0,
+      transparent 0,
+      transparent 100%,
+      #000 100%
+    );
+  mask-composite: exclude;
 }
 
 .mobile-curved-nav__list {
@@ -240,7 +248,7 @@ html.lightbox-open .app-main-scroll {
   align-items: flex-end;
   justify-content: space-around;
   margin: 0;
-  padding: 0.5rem 0.35rem 0.85rem;
+  padding: 0.35rem 0.35rem 0.65rem;
   list-style: none;
 }
 
@@ -256,7 +264,7 @@ html.lightbox-open .app-main-scroll {
   align-items: center;
   justify-content: flex-end;
   width: 100%;
-  min-height: 3rem;
+  min-height: 2.75rem;
   padding: 0;
   border: 0;
   background: transparent;
@@ -267,21 +275,24 @@ html.lightbox-open .app-main-scroll {
 
 .mobile-curved-nav__button--active {
   justify-content: flex-start;
-  min-height: 0.5rem;
+  min-height: 0;
+  padding-top: 0;
 }
 
 .mobile-curved-nav__fab {
+  position: relative;
+  z-index: 3;
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 3.5rem;
-  height: 3.5rem;
-  margin-top: -2.15rem;
+  width: 3.25rem;
+  height: 3.25rem;
+  margin-top: -1.55rem;
   border-radius: 9999px;
   background: var(--primary);
   box-shadow:
-    0 10px 28px oklch(0.35 0.08 250 / 0.42),
-    0 2px 8px oklch(0.25 0.04 250 / 0.18);
+    0 8px 22px oklch(0.35 0.08 250 / 0.4),
+    0 2px 6px oklch(0.25 0.04 250 / 0.15);
   transition: transform 0.28s cubic-bezier(0.34, 1.2, 0.64, 1);
 }
 
@@ -290,10 +301,12 @@ html.lightbox-open .app-main-scroll {
 }
 
 .mobile-curved-nav__dot {
+  position: relative;
+  z-index: 2;
   display: block;
-  width: 0.3125rem;
-  height: 0.3125rem;
-  margin-top: 0.4rem;
+  width: 0.3rem;
+  height: 0.3rem;
+  margin-top: 0.25rem;
   border-radius: 9999px;
   background: var(--primary);
 }
