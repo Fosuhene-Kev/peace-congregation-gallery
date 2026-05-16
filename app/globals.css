@@ -46,8 +46,15 @@
 
   /* App shell */
   --app-sidebar-width: 18rem;
-  --app-mobile-nav-height: 3.5rem;
-  --app-mobile-nav-total: 5.25rem;
+  --app-mobile-nav-bar: 3.5rem;
+  --app-mobile-nav-float: 1.25rem;
+  --app-mobile-nav-offset: 0.625rem;
+  --app-mobile-nav-gap: 0.375rem;
+  --app-mobile-nav-total: calc(
+    env(safe-area-inset-bottom, 0px) + var(--app-mobile-nav-offset) +
+      var(--app-mobile-nav-bar) + var(--app-mobile-nav-float) +
+      var(--app-mobile-nav-gap)
+  );
 }
 
 .dark {
@@ -197,116 +204,126 @@ html.lightbox-open .app-main-scroll {
   column-fill: balance;
 }
 
-/* Premium curved mobile bottom navigation — flat top + concave scoop dip */
-.mobile-curved-nav {
+/*
+ * Mobile bottom navigation (final)
+ * Floating pill + elevated active circle. No SVG scoops, no ::before/::after wings.
+ */
+.mobile-nav {
   position: fixed;
   right: 0;
   bottom: 0;
   left: 0;
   z-index: 40;
-  padding-bottom: env(safe-area-inset-bottom, 0);
+  padding: 0 0.75rem var(--app-mobile-nav-offset);
+  padding-bottom: calc(
+    var(--app-mobile-nav-offset) + env(safe-area-inset-bottom, 0px)
+  );
   pointer-events: none;
 }
 
-.mobile-curved-nav__shell {
-  --nav-scoop-x: calc((var(--nav-active-index) + 0.5) * (100% / 4));
-  pointer-events: auto;
+.mobile-nav__frame {
+  --nav-fab-size: 3.25rem;
+  pointer-events: none;
   position: relative;
-  margin: 0 0.5rem 0.5rem;
-  overflow: visible;
-  border-radius: 0 0 1.25rem 1.25rem;
-  background: var(--card);
-  min-height: var(--app-mobile-nav-height);
-  box-shadow:
-    0 -4px 24px oklch(0.25 0.04 250 / 0.1),
-    0 0 0 1px oklch(0.9 0.01 250 / 0.5);
-  /* Concave scoop: transparent hole at top reveals gallery behind the bar */
-  -webkit-mask-image:
-    linear-gradient(#000, #000),
-    radial-gradient(
-      ellipse 2.35rem 1.15rem at var(--nav-scoop-x) 0,
-      transparent 0,
-      transparent 100%,
-      #000 100%
-    );
-  -webkit-mask-composite: destination-out;
-  mask-image:
-    linear-gradient(#000, #000),
-    radial-gradient(
-      ellipse 2.35rem 1.15rem at var(--nav-scoop-x) 0,
-      transparent 0,
-      transparent 100%,
-      #000 100%
-    );
-  mask-composite: exclude;
-}
-
-.mobile-curved-nav__list {
-  position: relative;
-  z-index: 1;
-  display: flex;
-  align-items: flex-end;
-  justify-content: space-around;
-  margin: 0;
-  padding: 0.35rem 0.35rem 0.65rem;
-  list-style: none;
-}
-
-.mobile-curved-nav__item {
-  display: flex;
-  flex: 1;
-  justify-content: center;
-}
-
-.mobile-curved-nav__button {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: flex-end;
   width: 100%;
-  min-height: 2.75rem;
+  height: calc(
+    var(--app-mobile-nav-bar) + var(--app-mobile-nav-float)
+  );
+}
+
+.mobile-nav__pill {
+  pointer-events: auto;
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  height: var(--app-mobile-nav-bar);
+  border: 1px solid oklch(0 0 0 / 0.06);
+  border-radius: 1.875rem;
+  background-color: var(--card);
+  box-shadow:
+    0 8px 32px oklch(0.25 0.04 250 / 0.12),
+    0 2px 8px oklch(0.25 0.04 250 / 0.06);
+}
+
+.mobile-nav__tabs {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  align-items: center;
+  height: 100%;
+}
+
+.mobile-nav__tab {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+}
+
+.mobile-nav__tab-spacer {
+  display: block;
+  width: 1.25rem;
+  height: 1.25rem;
+}
+
+.mobile-nav__tab-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.75rem;
+  height: 2.75rem;
   padding: 0;
   border: 0;
+  border-radius: 9999px;
   background: transparent;
   cursor: pointer;
   -webkit-tap-highlight-color: transparent;
   touch-action: manipulation;
+  transition: background-color 0.15s ease;
 }
 
-.mobile-curved-nav__button--active {
-  justify-content: flex-start;
-  min-height: 0;
-  padding-top: 0;
+.mobile-nav__tab-btn:active {
+  background-color: oklch(0.55 0.06 250 / 0.08);
 }
 
-.mobile-curved-nav__fab {
-  position: relative;
-  z-index: 3;
+.mobile-nav__fab {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  z-index: 10;
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 3.25rem;
-  height: 3.25rem;
-  margin-top: -1.55rem;
-  border-radius: 9999px;
-  background: var(--primary);
-  box-shadow:
-    0 8px 22px oklch(0.35 0.08 250 / 0.4),
-    0 2px 6px oklch(0.25 0.04 250 / 0.15);
-  transition: transform 0.28s cubic-bezier(0.34, 1.2, 0.64, 1);
+  width: var(--nav-fab-size);
+  height: var(--nav-fab-size);
+  border: 0;
+  border-radius: 50%;
+  background-color: var(--primary);
+  box-shadow: 0 8px 20px oklch(0.35 0.08 250 / 0.35);
+  cursor: pointer;
+  pointer-events: auto;
+  transform: translateX(-50%);
+  transition:
+    left 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+    transform 0.15s ease;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
 }
 
-.mobile-curved-nav__button--active:active .mobile-curved-nav__fab {
-  transform: scale(0.94);
+.mobile-nav__fab:active {
+  transform: translateX(-50%) scale(0.96);
 }
 
-.mobile-curved-nav__dot {
-  position: relative;
-  z-index: 2;
-  display: block;
-  width: 0.3rem;
-  height: 0.3rem;
-  margin-top: 0.25rem;
-  border-radius: 9999px;
-  background: var(--primary);
+.mobile-nav__dot {
+  position: absolute;
+  bottom: 0.625rem;
+  left: 50%;
+  z-index: 11;
+  width: 0.3125rem;
+  height: 0.3125rem;
+  border-radius: 50%;
+  background-color: var(--primary);
+  transform: translateX(-50%);
+  transition: left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  pointer-events: none;
 }

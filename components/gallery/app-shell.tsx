@@ -9,6 +9,7 @@ import {
 } from "lucide-react"
 import type { AppView } from "@/lib/navigation"
 import { NAV_ITEMS } from "@/lib/navigation"
+import { MobileBottomNav } from "@/components/gallery/mobile-bottom-nav"
 import { cn } from "@/lib/utils"
 
 const NAV_ICONS = {
@@ -30,7 +31,7 @@ export function AppShell({ activeView, onViewChange, children }: AppShellProps) 
       <DesktopSidebar activeView={activeView} onViewChange={onViewChange} />
       <div className="flex h-full min-h-0 min-w-0 flex-1 flex-col md:pl-[var(--app-sidebar-width)]">
         <MobileTopBar />
-        <main className="app-main-scroll min-h-0 flex-1 overflow-x-hidden overflow-y-auto px-4 pt-4 pb-[calc(var(--app-mobile-nav-total)+0.5rem+env(safe-area-inset-bottom,0px))] sm:px-6 md:pb-6 md:pt-6">
+        <main className="app-main-scroll min-h-0 flex-1 overflow-x-hidden overflow-y-auto px-4 pt-4 pb-[var(--app-mobile-nav-total)] sm:px-6 md:pb-6 md:pt-6">
           {children}
         </main>
         <MobileBottomNav activeView={activeView} onViewChange={onViewChange} />
@@ -147,65 +148,3 @@ function MobileTopBar() {
   )
 }
 
-function MobileBottomNav({
-  activeView,
-  onViewChange,
-}: {
-  activeView: AppView
-  onViewChange: (view: AppView) => void
-}) {
-  const activeIndex = Math.max(
-    0,
-    NAV_ITEMS.findIndex((item) => item.id === activeView)
-  )
-
-  return (
-    <nav
-      className="mobile-curved-nav md:hidden"
-      style={{ "--nav-active-index": activeIndex } as React.CSSProperties}
-      aria-label="Main"
-    >
-      <div className="mobile-curved-nav__shell">
-        <ul className="mobile-curved-nav__list">
-          {NAV_ITEMS.map((item) => {
-            const Icon = NAV_ICONS[item.id]
-            const isActive = activeView === item.id
-            return (
-              <li key={item.id} className="mobile-curved-nav__item">
-                <button
-                  type="button"
-                  onClick={() => onViewChange(item.id)}
-                  aria-current={isActive ? "page" : undefined}
-                  aria-label={item.label}
-                  className={cn(
-                    "mobile-curved-nav__button",
-                    isActive && "mobile-curved-nav__button--active"
-                  )}
-                >
-                  {isActive ? (
-                    <>
-                      <span className="mobile-curved-nav__fab">
-                        <Icon
-                          className="h-[22px] w-[22px] text-primary-foreground"
-                          strokeWidth={2.25}
-                          aria-hidden
-                        />
-                      </span>
-                      <span className="mobile-curved-nav__dot" aria-hidden />
-                    </>
-                  ) : (
-                    <Icon
-                      className="h-[22px] w-[22px] text-muted-foreground/80"
-                      strokeWidth={1.75}
-                      aria-hidden
-                    />
-                  )}
-                </button>
-              </li>
-            )
-          })}
-        </ul>
-      </div>
-    </nav>
-  )
-}
