@@ -8,7 +8,7 @@ import {
   Mic2,
 } from "lucide-react"
 import type { AppView } from "@/lib/navigation"
-import { NAV_ITEMS, SITE_TITLE } from "@/lib/navigation"
+import { NAV_ITEMS } from "@/lib/navigation"
 import { cn } from "@/lib/utils"
 
 const NAV_ICONS = {
@@ -30,7 +30,7 @@ export function AppShell({ activeView, onViewChange, children }: AppShellProps) 
       <DesktopSidebar activeView={activeView} onViewChange={onViewChange} />
       <div className="flex h-full min-h-0 min-w-0 flex-1 flex-col md:pl-[var(--app-sidebar-width)]">
         <MobileTopBar />
-        <main className="app-main-scroll min-h-0 flex-1 overflow-x-hidden overflow-y-auto px-4 pt-4 pb-[calc(var(--app-mobile-nav-height)+1rem+env(safe-area-inset-bottom,0px))] sm:px-6 md:pb-6 md:pt-6">
+        <main className="app-main-scroll min-h-0 flex-1 overflow-x-hidden overflow-y-auto px-4 pt-4 pb-[calc(var(--app-mobile-nav-total)+1rem+env(safe-area-inset-bottom,0px))] sm:px-6 md:pb-6 md:pt-6">
           {children}
         </main>
         <MobileBottomNav activeView={activeView} onViewChange={onViewChange} />
@@ -39,80 +39,30 @@ export function AppShell({ activeView, onViewChange, children }: AppShellProps) 
   )
 }
 
-function BrandMark({ compact = false }: { compact?: boolean }) {
-  return (
-    <div className={cn("flex items-center gap-3", compact && "gap-2")}>
-      <div className="relative shrink-0 overflow-hidden rounded-full bg-primary/10 ring-2 ring-[oklch(0.75_0.15_85)]/40">
-        <Image
-          src="/church-logo.png"
-          alt="PCG Peace Congregation logo"
-          width={compact ? 32 : 40}
-          height={compact ? 32 : 40}
-          className={cn("object-contain", compact ? "h-8 w-8 p-0.5" : "h-10 w-10 p-1")}
-        />
-      </div>
-      <div className="min-w-0 text-left">
-        <p
-          className={cn(
-            "font-bold leading-snug tracking-tight text-foreground",
-            compact
-              ? "line-clamp-2 text-[11px] sm:text-xs"
-              : "text-sm leading-snug"
-          )}
-        >
-          {SITE_TITLE}
-        </p>
-      </div>
-    </div>
-  )
-}
-
-function NavButton({
-  view,
-  activeView,
-  onViewChange,
-  layout,
+function ChurchLogo({
+  size = "md",
+  className,
 }: {
-  view: (typeof NAV_ITEMS)[number]
-  activeView: AppView
-  onViewChange: (view: AppView) => void
-  layout: "sidebar" | "bottom"
+  size?: "sm" | "md" | "lg"
+  className?: string
 }) {
-  const Icon = NAV_ICONS[view.id]
-  const isActive = activeView === view.id
-
+  const dims = { sm: 36, md: 44, lg: 52 }[size]
   return (
-    <button
-      type="button"
-      onClick={() => onViewChange(view.id)}
+    <div
       className={cn(
-        "flex items-center transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
-        layout === "sidebar"
-          ? cn(
-              "w-full gap-3 rounded-xl px-3 py-2.5 text-sm font-medium",
-              isActive
-                ? "bg-primary text-primary-foreground shadow-sm"
-                : "text-sidebar-foreground/80 hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
-            )
-          : cn(
-              "min-w-0 flex-1 flex-col gap-1 rounded-lg px-1 py-2 text-[10px] font-medium sm:text-xs",
-              isActive ? "text-primary" : "text-muted-foreground"
-            )
+        "relative shrink-0 overflow-hidden rounded-full bg-primary/5 ring-2 ring-[oklch(0.75_0.15_85)]/50",
+        className
       )}
-      aria-current={isActive ? "page" : undefined}
     >
-      <Icon
-        className={cn(
-          "shrink-0",
-          layout === "sidebar" ? "h-5 w-5" : "h-5 w-5 mx-auto",
-          layout === "bottom" && isActive && "stroke-[2.5]"
-        )}
-        aria-hidden
+      <Image
+        src="/church-logo.png"
+        alt="PCG Peace Congregation logo"
+        width={dims}
+        height={dims}
+        className="object-contain p-0.5"
+        style={{ width: dims, height: dims }}
       />
-      <span className={layout === "bottom" ? "truncate" : ""}>
-        {layout === "bottom" ? view.shortLabel : view.label}
-      </span>
-    </button>
+    </div>
   )
 }
 
@@ -124,24 +74,62 @@ function DesktopSidebar({
   onViewChange: (view: AppView) => void
 }) {
   return (
-    <aside className="app-sidebar fixed inset-y-0 left-0 z-40 hidden w-[var(--app-sidebar-width)] flex-col border-r border-sidebar-border bg-sidebar text-sidebar-foreground md:flex">
-      <div className="border-b border-sidebar-border px-5 py-6">
-        <BrandMark />
+    <aside className="app-sidebar fixed inset-y-0 left-0 z-40 hidden w-[var(--app-sidebar-width)] flex-col border-r border-border/60 bg-card md:flex">
+      <div className="px-6 pb-2 pt-8">
+        <div className="flex flex-col items-center gap-3 text-center">
+          <ChurchLogo size="lg" />
+          <p className="text-[10px] font-semibold uppercase tracking-[0.22em] text-muted-foreground">
+            Media App
+          </p>
+        </div>
       </div>
-      <nav className="flex flex-1 flex-col gap-1 px-3 py-4" aria-label="Main">
-        {NAV_ITEMS.map((item) => (
-          <NavButton
-            key={item.id}
-            view={item}
-            activeView={activeView}
-            onViewChange={onViewChange}
-            layout="sidebar"
-          />
-        ))}
+
+      <nav className="flex flex-1 flex-col gap-2 px-4 py-6" aria-label="Main">
+        {NAV_ITEMS.map((item) => {
+          const Icon = NAV_ICONS[item.id]
+          const isActive = activeView === item.id
+          return (
+            <button
+              key={item.id}
+              type="button"
+              onClick={() => onViewChange(item.id)}
+              aria-current={isActive ? "page" : undefined}
+              className={cn(
+                "group relative flex w-full items-center gap-3 rounded-2xl px-4 py-3.5 text-left text-sm font-medium transition-all duration-300 ease-out",
+                "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",
+                isActive
+                  ? "bg-primary text-primary-foreground shadow-lg shadow-primary/25"
+                  : "text-muted-foreground hover:bg-muted/60 hover:text-foreground"
+              )}
+            >
+              <span
+                className={cn(
+                  "flex h-10 w-10 shrink-0 items-center justify-center rounded-full transition-all duration-300",
+                  isActive
+                    ? "bg-primary-foreground/15"
+                    : "bg-muted/80 group-hover:bg-muted"
+                )}
+              >
+                <Icon
+                  className={cn("h-5 w-5", isActive && "stroke-[2.25]")}
+                  aria-hidden
+                />
+              </span>
+              <span className="flex-1">{item.label}</span>
+              {isActive && (
+                <span
+                  className="h-2 w-2 shrink-0 rounded-full bg-[oklch(0.75_0.15_85)] shadow-sm"
+                  aria-hidden
+                />
+              )}
+            </button>
+          )
+        })}
       </nav>
-      <div className="border-t border-sidebar-border px-5 py-4">
-        <p className="text-xs text-muted-foreground leading-relaxed">
-          Photo gallery & media archive
+
+      <div className="border-t border-border/60 px-6 py-5">
+        <p className="text-center text-xs leading-relaxed text-muted-foreground">
+          Photo gallery &amp; media archive
         </p>
       </div>
     </aside>
@@ -150,9 +138,9 @@ function DesktopSidebar({
 
 function MobileTopBar() {
   return (
-    <header className="z-30 flex shrink-0 items-center justify-between border-b border-border bg-background/95 px-4 py-3 backdrop-blur-md md:hidden">
-      <BrandMark compact />
-      <p className="text-[10px] uppercase tracking-widest text-muted-foreground">
+    <header className="z-30 flex shrink-0 items-center justify-between border-b border-border/70 bg-card/95 px-5 py-3 backdrop-blur-md md:hidden">
+      <ChurchLogo size="sm" />
+      <p className="text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground">
         Media App
       </p>
     </header>
@@ -166,21 +154,58 @@ function MobileBottomNav({
   activeView: AppView
   onViewChange: (view: AppView) => void
 }) {
+  const activeIndex = Math.max(
+    0,
+    NAV_ITEMS.findIndex((item) => item.id === activeView)
+  )
+
   return (
     <nav
-      className="fixed bottom-0 left-0 right-0 z-40 border-t border-border bg-card/95 px-2 pb-[max(0.5rem,env(safe-area-inset-bottom))] pt-2 backdrop-blur-md md:hidden"
+      className="mobile-curved-nav md:hidden"
+      style={{ "--nav-active-index": activeIndex } as React.CSSProperties}
       aria-label="Main"
     >
-      <div className="flex items-stretch justify-around gap-1">
-        {NAV_ITEMS.map((item) => (
-          <NavButton
-            key={item.id}
-            view={item}
-            activeView={activeView}
-            onViewChange={onViewChange}
-            layout="bottom"
-          />
-        ))}
+      <div className="mobile-curved-nav__shell">
+        <div className="mobile-curved-nav__notch" aria-hidden />
+        <ul className="mobile-curved-nav__list">
+          {NAV_ITEMS.map((item) => {
+            const Icon = NAV_ICONS[item.id]
+            const isActive = activeView === item.id
+            return (
+              <li key={item.id} className="mobile-curved-nav__item">
+                <button
+                  type="button"
+                  onClick={() => onViewChange(item.id)}
+                  aria-current={isActive ? "page" : undefined}
+                  aria-label={item.label}
+                  className={cn(
+                    "mobile-curved-nav__button",
+                    isActive && "mobile-curved-nav__button--active"
+                  )}
+                >
+                  {isActive ? (
+                    <>
+                      <span className="mobile-curved-nav__fab">
+                        <Icon
+                          className="h-[22px] w-[22px] text-primary-foreground"
+                          strokeWidth={2.25}
+                          aria-hidden
+                        />
+                      </span>
+                      <span className="mobile-curved-nav__dot" aria-hidden />
+                    </>
+                  ) : (
+                    <Icon
+                      className="h-[22px] w-[22px] text-muted-foreground/80"
+                      strokeWidth={1.75}
+                      aria-hidden
+                    />
+                  )}
+                </button>
+              </li>
+            )
+          })}
+        </ul>
       </div>
     </nav>
   )
