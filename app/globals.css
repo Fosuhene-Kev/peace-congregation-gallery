@@ -204,6 +204,19 @@ html.lightbox-open .app-main-scroll {
   column-fill: balance;
 }
 
+/* Events carousel — compact centered cards */
+.events-carousel {
+  --event-card-width: min(24rem, 85vw);
+  --event-card-height: 23.75rem;
+}
+
+.events-carousel__card {
+  width: var(--event-card-width);
+  height: var(--event-card-height);
+  max-height: 26.25rem;
+  min-height: 21.875rem;
+}
+
 /*
  * Mobile bottom navigation (final)
  * Floating pill + elevated active circle. No SVG scoops, no ::before/::after wings.

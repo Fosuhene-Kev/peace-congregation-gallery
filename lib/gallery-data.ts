@@ -3,6 +3,8 @@ export interface GalleryEvent {
   eventName: string
   eventDate: string
   description: string
+  /** Google Drive file ID for the carousel cover (same sharing rules as gallery photos) */
+  coverDriveId?: string | null
 }
 
 export interface GalleryPhoto {
@@ -21,7 +23,7 @@ export interface ChurchGalleryData {
  * Church Gallery Data Structure
  * 
  * To add new events and photos:
- * 1. Add a new event object to the "events" array
+ * 1. Add a new event object to the "events" array (optional coverDriveId for carousel cover)
  * 2. Add photo objects to the "photos" array with matching eventId
  * 3. Get the driveId from the Google Drive share link:
  *    https://drive.google.com/file/d/[DRIVE_ID]/view
@@ -33,8 +35,10 @@ export const churchGalleryData: ChurchGalleryData = {
       eventId: "2026-mothers-day",
       eventName: "Mother's Day Grand Finale",
       eventDate: "2026-05-10",
-      description: "Celebrating the grace, beauty, and impact of our mothers at Peace Congregation. A day filled with joy, appreciation, and thanksgiving for the pillars of our homes."
-    }
+      description:
+        "Celebrating the grace, beauty, and impact of our mothers at Peace Congregation. A day filled with joy, appreciation, and thanksgiving for the pillars of our homes.",
+      coverDriveId: "1rA0YdEWABCQELllEpwj7InemRPQYVlrM",
+    },
   ],
   photos: [
     // Mother's Day Photos (2026 — Google Drive)
@@ -134,6 +138,12 @@ export function getThumbnailUrl(driveId: string): string {
   return `https://drive.google.com/thumbnail?id=${id}&sz=w300`
 }
 
+/** Larger thumbnail for event carousel cover cards */
+export function getEventCoverUrl(driveId: string): string {
+  const id = encodeURIComponent(driveId)
+  return `https://drive.google.com/thumbnail?id=${id}&sz=w800`
+}
+
 /** Larger preview for the lightbox (still served as an image, no API key). */
 export function getFullResolutionUrl(driveId: string): string {
   const id = encodeURIComponent(driveId)
@@ -151,4 +161,22 @@ export function getDriveViewImageUrl(driveId: string): string {
  */
 export function getDownloadUrl(driveId: string): string {
   return `https://drive.google.com/uc?export=download&id=${driveId}`
+}
+
+export function getSortedEvents(): GalleryEvent[] {
+  return [...churchGalleryData.events].sort(
+    (a, b) => new Date(b.eventDate).getTime() - new Date(a.eventDate).getTime()
+  )
+}
+
+export function getEventById(eventId: string): GalleryEvent | undefined {
+  return churchGalleryData.events.find((e) => e.eventId === eventId)
+}
+
+export function getPhotosForEvent(eventId: string): GalleryPhoto[] {
+  return churchGalleryData.photos.filter((p) => p.eventId === eventId)
+}
+
+export function getPhotoCountForEvent(eventId: string): number {
+  return getPhotosForEvent(eventId).length
 }
