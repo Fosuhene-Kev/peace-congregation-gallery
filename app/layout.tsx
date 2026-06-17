@@ -1,4 +1,4 @@
-import type { Metadata } from 'next'
+import type { Metadata, Viewport } from 'next'
 import { Geist, Geist_Mono } from 'next/font/google'
 import { Analytics } from '@vercel/analytics/next'
 import { SITE_TITLE } from '@/lib/navigation'
@@ -13,6 +13,7 @@ const siteUrl =
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
+  manifest: "/manifest.json",
   title: SITE_TITLE,
   description:
     "Official photo archive of PCG Peace Congregation, Bronkong-Afrancho. View and download photos from church events and celebrations.",
@@ -45,6 +46,13 @@ export const metadata: Metadata = {
     ],
     apple: '/apple-icon.png',
   },
+}
+
+export const viewport: Viewport = {
+  themeColor: [
+    { media: "(prefers-color-scheme: light)", color: "#f8f9fc" },
+    { media: "(prefers-color-scheme: dark)", color: "#252525" },
+  ],
 }
 
 export default function RootLayout({

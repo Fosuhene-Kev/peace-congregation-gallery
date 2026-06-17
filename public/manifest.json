@@ -1,0 +1,30 @@
+{
+  "name": "PCG Peace Congregation Bronkong-Afrancho",
+  "short_name": "Peace Congregation",
+  "description": "Official photo archive of PCG Peace Congregation, Bronkong-Afrancho. View and download photos from church events and celebrations.",
+  "start_url": "/",
+  "scope": "/",
+  "id": "/",
+  "display": "standalone",
+  "display_override": ["standalone", "minimal-ui"],
+  "orientation": "portrait-primary",
+  "dir": "ltr",
+  "lang": "en",
+  "theme_color": "#2f4573",
+  "background_color": "#f8f9fc",
+  "categories": ["photo", "lifestyle", "utilities"],
+  "icons": [
+    {
+      "src": "/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    },
+    {
+      "src": "/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "maskable"
+    }
+  ]
+}
