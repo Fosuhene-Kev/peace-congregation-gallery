@@ -3,6 +3,7 @@
 import type { GalleryEvent, GalleryPhoto } from "@/lib/gallery-data"
 import { EventDetailHeader } from "@/components/gallery/event-detail-header"
 import { PhotoGrid } from "@/components/gallery/photo-grid"
+import { StackedCardGallery } from "@/components/gallery/stacked-card-gallery"
 
 interface EventDetailViewProps {
   event: GalleryEvent
@@ -17,12 +18,18 @@ export function EventDetailView({
   onBack,
   onPhotoClick,
 }: EventDetailViewProps) {
+  const useStackedLayout = event.galleryLayout === "stacked"
+
   return (
     <div className="mx-auto w-full max-w-7xl">
       <EventDetailHeader event={event} onBack={onBack} />
 
       {photos.length > 0 ? (
-        <PhotoGrid photos={photos} onPhotoClick={onPhotoClick} />
+        useStackedLayout ? (
+          <StackedCardGallery photos={photos} onPhotoClick={onPhotoClick} />
+        ) : (
+          <PhotoGrid photos={photos} onPhotoClick={onPhotoClick} />
+        )
       ) : (
         <div className="py-16 text-center">
           <p className="text-muted-foreground">

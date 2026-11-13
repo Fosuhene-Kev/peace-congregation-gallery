@@ -5,12 +5,16 @@ export interface GalleryEvent {
   description: string
   /** Google Drive file ID for the carousel cover (same sharing rules as gallery photos) */
   coverDriveId?: string | null
+  /** Gallery presentation — defaults to masonry grid when omitted */
+  galleryLayout?: "grid" | "stacked"
 }
 
 export interface GalleryPhoto {
   photoId: string
   eventId: string
   driveId: string
+  /** Short heading shown on stacked cards and lightbox */
+  title?: string
   caption: string
 }
 
@@ -32,6 +36,15 @@ export interface ChurchGalleryData {
 export const churchGalleryData: ChurchGalleryData = {
   events: [
     {
+      eventId: "2026-mens-week-sunday",
+      eventName: "Men's Week Sunday Service",
+      eventDate: "2026-06-15",
+      description:
+        "The culminating Sunday worship of Men's Week at Peace Congregation — observed as Red Sunday in prayerful solidarity against illegal mining (galamsey). The service also honored the faithful life and enduring legacy of the late retired Catechist George Asare.",
+      coverDriveId: null,
+      galleryLayout: "stacked",
+    },
+    {
       eventId: "2026-mothers-day",
       eventName: "Mother's Day Grand Finale",
       eventDate: "2026-05-10",
@@ -41,6 +54,160 @@ export const churchGalleryData: ChurchGalleryData = {
     },
   ],
   photos: [
+    // Men's Week Sunday — Red Sunday & tribute to Catechist George Asare (2026)
+    {
+      photoId: "men-sunday-01",
+      eventId: "2026-mens-week-sunday",
+      driveId: "1A6G3lHaeh-uRrkBU2q1IzTXFF28KCO0",
+      title: "Men's Week Sunday Worship",
+      caption:
+        "The congregation gathers for the culminating Sunday service of Men's Week — a joyful opening of worship, fellowship, and thanksgiving at Peace Congregation.",
+    },
+    {
+      photoId: "men-sunday-02",
+      eventId: "2026-mens-week-sunday",
+      driveId: "19TAXTK8J4f-mU4A51Mmz_tAG2DPzcsWm",
+      title: "Red Sunday — Standing Against Galamsey",
+      caption:
+        "Observed as Red Sunday, members wore red in prayerful solidarity against illegal mining (galamsey) and for the faithful stewardship of Ghana's land and waters.",
+    },
+    {
+      photoId: "men-sunday-03",
+      eventId: "2026-mens-week-sunday",
+      driveId: "1u5g9nAzNNtYMB3GnD0Ku-cod42gmTqH8",
+      title: "In Memory of Catechist George Asare",
+      caption:
+        "A reverent moment honoring the late retired Catechist George Asare — remembered for his faithful teaching, gentle counsel, and years of devoted service.",
+    },
+    {
+      photoId: "men-sunday-04",
+      eventId: "2026-mens-week-sunday",
+      driveId: "1P-SR6yDjP5bkolDiNNi1-iqCP3wVf05d",
+      title: "Men's Fellowship in Praise",
+      caption:
+        "Brothers of the congregation united in vibrant worship during Men's Week, reflecting the strength, humility, and devotion of godly manhood in the church.",
+    },
+    {
+      photoId: "men-sunday-05",
+      eventId: "2026-mens-week-sunday",
+      driveId: "13VfyNWHaU9z8zeOI0lbYxea3H1gnXer6",
+      title: "Prayer Against Illegal Mining",
+      caption:
+        "The church lifted fervent intercession against galamsey — praying that Ghana's communities, rivers, and farmlands would be protected from destruction and greed.",
+    },
+    {
+      photoId: "men-sunday-06",
+      eventId: "2026-mens-week-sunday",
+      driveId: "1wtYmvAF7lyJdjRoOTzNBhQs_rE0Vrdog",
+      title: "Remembering a Faithful Catechist",
+      caption:
+        "Congregants reflected on the enduring legacy of Catechist George Asare, whose patient instruction and shepherd's heart shaped generations at Peace Congregation.",
+    },
+    {
+      photoId: "men-sunday-07",
+      eventId: "2026-mens-week-sunday",
+      driveId: "1kFZ3PBAZlybquUh5k3mC0C47UbhWUILn",
+      title: "Celebrating Men's Week",
+      caption:
+        "Men's Week reached its joyful climax as the church celebrated godly leadership, brotherhood, and the shared calling of men to serve Christ and community.",
+    },
+    {
+      photoId: "men-sunday-08",
+      eventId: "2026-mens-week-sunday",
+      driveId: "1WVIlNwIMmpfhkU9KpUZooxTrkzU6pOxt",
+      title: "Red Sunday Congregational Witness",
+      caption:
+        "A sea of red throughout the sanctuary marked the congregation's collective stance — a visible witness against galamsey and for the care of creation.",
+    },
+    {
+      photoId: "men-sunday-09",
+      eventId: "2026-mens-week-sunday",
+      driveId: "1COAxZU2kv8ZaM3QA8Y-nO7gp2zqmDdn_",
+      title: "Tribute to Catechist George Asare",
+      caption:
+        "Leaders and members paused to give thanks for the life of the late retired Catechist George Asare, whose faithfulness remains a light in this congregation.",
+    },
+    {
+      photoId: "men-sunday-10",
+      eventId: "2026-mens-week-sunday",
+      driveId: "1Td2yi0CukDy_qF-BSar3E6h4zuzQZXsL",
+      title: "Men Leading in Worship",
+      caption:
+        "Men of Peace Congregation took active roles in scripture, prayer, and praise — embodying the spirit of Men's Week through willing service at the altar.",
+    },
+    {
+      photoId: "men-sunday-11",
+      eventId: "2026-mens-week-sunday",
+      driveId: "1zYbDufobMHup6G_k418C4d965FOxKLfl",
+      title: "Intercession for the Environment",
+      caption:
+        "Red Sunday brought a united cry to heaven — that illegal mining would cease, that justice would prevail, and that Ghana's natural heritage would be preserved.",
+    },
+    {
+      photoId: "men-sunday-12",
+      eventId: "2026-mens-week-sunday",
+      driveId: "1dUPniPcPoQQIy7Loy86K3ZsejTD1k6u0",
+      title: "A Life Well Lived in Service",
+      caption:
+        "Remembrance for Catechist George Asare filled the service — a servant who taught the Word with clarity, loved the flock with patience, and finished his course with grace.",
+    },
+    {
+      photoId: "men-sunday-13",
+      eventId: "2026-mens-week-sunday",
+      driveId: "1iWi1Plz_nX21qicw-A7rS_wTxg8ZhRRy",
+      title: "Men's Week Fellowship",
+      caption:
+        "Warm fellowship among the men of the church marked this special Sunday — bonds of faith strengthened through shared worship and mutual encouragement.",
+    },
+    {
+      photoId: "men-sunday-14",
+      eventId: "2026-mens-week-sunday",
+      driveId: "18T8QyqVAA27naTekS3n9nlFY_XOWW241",
+      title: "Red Sunday — A Church That Cares",
+      caption:
+        "Peace Congregation stood together on Red Sunday, declaring that the fight against galamsey is also a fight for the wellbeing of every community and child.",
+    },
+    {
+      photoId: "men-sunday-15",
+      eventId: "2026-mens-week-sunday",
+      driveId: "12I7yAdPy-0LM2V1beE7y6Wj11jh-qavx",
+      title: "Honoring Retired Catechist George Asare",
+      caption:
+        "The congregation held the memory of Catechist George Asare with deep gratitude — his voice in Sunday school and catechism classes still echoes in many hearts.",
+    },
+    {
+      photoId: "men-sunday-16",
+      eventId: "2026-mens-week-sunday",
+      driveId: "12C4dAEuCxVUB7RIqFShH21Zw2K1KiQT1",
+      title: "Men's Ministration in Song",
+      caption:
+        "Men led the congregation in song and praise, offering their gifts joyfully as Men's Week drew toward its closing moments of worship.",
+    },
+    {
+      photoId: "men-sunday-17",
+      eventId: "2026-mens-week-sunday",
+      driveId: "1aHDBe7bgFGi57Xl9V5Y7Y0zrs4l3WuSQ",
+      title: "Solidarity Against Galamsey",
+      caption:
+        "Red Sunday reminded every worshipper that the church must speak and pray with one voice against practices that destroy land, water, and future generations.",
+    },
+    {
+      photoId: "men-sunday-18",
+      eventId: "2026-mens-week-sunday",
+      driveId: "1VnkutFjEYOYMwEsmjEZxzb-q_ztt6VQt",
+      title: "In Loving Memory",
+      caption:
+        "A final act of remembrance for the late Catechist George Asare — faithful unto death, and held forever in the affection of Peace Congregation, Bronkong-Afrancho.",
+    },
+    {
+      photoId: "men-sunday-19",
+      eventId: "2026-mens-week-sunday",
+      driveId: "1XsEnPNsV3DiTn9dF-3aNFVHEgI2WZItc",
+      title: "Men's Week Sunday — Benediction",
+      caption:
+        "The service closed under God's blessing — Men's Week fulfilled, Red Sunday observed, galamsey resisted in prayer, and the memory of Catechist George Asare cherished with thanksgiving.",
+    },
+
     // Mother's Day Photos (2026 — Google Drive)
     { photoId: "m1", eventId: "2026-mothers-day", driveId: "14Q1lWHvmfrcP-fjZCaDxoUwHVh5A1LhS", caption: "Mother's Day Celebration" },
     { photoId: "m2", eventId: "2026-mothers-day", driveId: "1Z0OZiAhm3wpfjg5Aaq8Hr-GSFPecZNq2", caption: "Honoring Our Mothers" },

@@ -85,8 +85,62 @@ interface EventCarouselCardProps {
   onOpen: () => void
 }
 
+function EventCoverPlaceholder({
+  eventName,
+  accent = "default",
+}: {
+  eventName: string
+  accent?: "default" | "red"
+}) {
+  return (
+    <div
+      className={cn(
+        "absolute inset-0 flex flex-col items-center justify-center gap-3 px-6",
+        accent === "red"
+          ? "bg-gradient-to-br from-[oklch(0.55_0.2_25)]/35 via-primary/15 to-muted"
+          : "bg-gradient-to-br from-primary/20 via-muted to-[oklch(0.75_0.15_85)]/25",
+      )}
+      aria-hidden
+    >
+      <div className="absolute inset-0 overflow-hidden">
+        <div className="absolute inset-x-6 top-8 h-32 animate-pulse rounded-2xl bg-white/10" />
+        <div className="absolute inset-x-10 top-44 h-3 animate-pulse rounded-full bg-white/10" />
+        <div className="absolute inset-x-14 top-52 h-3 animate-pulse rounded-full bg-white/8" />
+      </div>
+
+      <div
+        className={cn(
+          "relative flex h-16 w-16 items-center justify-center rounded-2xl border border-white/20 bg-black/10 shadow-inner backdrop-blur-sm",
+          accent === "red" && "border-[oklch(0.55_0.2_25)]/30 bg-[oklch(0.55_0.2_25)]/15",
+        )}
+      >
+        <CalendarDays
+          className={cn(
+            "h-8 w-8",
+            accent === "red" ? "text-[oklch(0.55_0.2_25)]" : "text-primary/70",
+          )}
+          aria-hidden
+        />
+      </div>
+
+      <div className="relative text-center">
+        <p className="text-[10px] font-semibold uppercase tracking-[0.18em] text-white/70">
+          Cover photo pending
+        </p>
+        <p className="mt-1 max-w-[14rem] text-xs font-medium leading-snug text-white/90">
+          Official event cover coming soon
+        </p>
+      </div>
+
+      <span className="sr-only">{eventName} — cover image not yet available</span>
+    </div>
+  )
+}
+
 function EventCarouselCard({ event, photoCount, onOpen }: EventCarouselCardProps) {
   const hasCover = event.coverDriveId != null && event.coverDriveId !== ""
+  const placeholderAccent =
+    event.eventId === "2026-mens-week-sunday" ? "red" : "default"
 
   return (
     <button
@@ -101,7 +155,10 @@ function EventCarouselCard({ event, photoCount, onOpen }: EventCarouselCardProps
       {hasCover ? (
         <EventCoverImage driveId={event.coverDriveId!} eventName={event.eventName} />
       ) : (
-        <div className="absolute inset-0 bg-gradient-to-br from-primary/20 via-muted to-[oklch(0.75_0.15_85)]/25" />
+        <EventCoverPlaceholder
+          eventName={event.eventName}
+          accent={placeholderAccent}
+        />
       )}
 
       <div

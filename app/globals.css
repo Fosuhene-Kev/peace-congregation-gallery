@@ -217,6 +217,141 @@ html.lightbox-open .app-main-scroll {
   min-height: 21.875rem;
 }
 
+/* Stacked scroll gallery — cards pin and overlay as the user scrolls */
+.stacked-gallery {
+  --stack-top: 1rem;
+  --stack-card-height: clamp(22rem, 72svh, 34rem);
+}
+
+.stacked-gallery__stage {
+  position: relative;
+  isolation: isolate;
+}
+
+.stacked-gallery__slide {
+  position: sticky;
+  top: var(--stack-top);
+  height: calc(var(--stack-card-height) + 2.75rem);
+  margin-bottom: 0.25rem;
+}
+
+.stacked-gallery__card-wrap {
+  transform-origin: center top;
+  transition:
+    transform 420ms cubic-bezier(0.22, 1, 0.36, 1),
+    filter 420ms cubic-bezier(0.22, 1, 0.36, 1);
+  will-change: transform;
+}
+
+.stacked-gallery__card-wrap--active {
+  filter: none;
+}
+
+.stacked-gallery__card {
+  display: block;
+  height: var(--stack-card-height);
+  overflow: hidden;
+  border-radius: 1.5rem;
+  border: 1px solid color-mix(in oklch, var(--border) 70%, transparent);
+  background: var(--card);
+  box-shadow:
+    0 1px 2px rgb(0 0 0 / 0.04),
+    0 12px 28px rgb(0 0 0 / 0.12),
+    0 24px 48px rgb(0 0 0 / 0.08);
+  transition: box-shadow 300ms ease;
+}
+
+.stacked-gallery__card:hover,
+.stacked-gallery__card:focus-visible {
+  box-shadow:
+    0 2px 4px rgb(0 0 0 / 0.05),
+    0 16px 36px rgb(0 0 0 / 0.14),
+    0 28px 56px rgb(0 0 0 / 0.1);
+}
+
+.stacked-gallery__media {
+  height: calc(var(--stack-card-height) - 7.5rem);
+}
+
+.stacked-gallery__meta {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  padding: 1rem 1.125rem 1.125rem;
+}
+
+.stacked-gallery__index {
+  font-size: 0.6875rem;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--muted-foreground);
+}
+
+.stacked-gallery__title {
+  font-size: 1rem;
+  font-weight: 600;
+  line-height: 1.35;
+  letter-spacing: -0.01em;
+  color: var(--foreground);
+}
+
+.stacked-gallery__caption {
+  font-size: 0.8125rem;
+  line-height: 1.55;
+  color: var(--muted-foreground);
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;
+  overflow: hidden;
+}
+
+.stacked-gallery__end-spacer {
+  height: min(36vh, 16rem);
+}
+
+.stacked-gallery--preview {
+  --stack-top: 0.75rem;
+  --stack-card-height: clamp(18rem, 58svh, 28rem);
+}
+
+.stacked-gallery--preview .stacked-gallery__slide {
+  height: calc(var(--stack-card-height) + 2.25rem);
+  margin-bottom: 0.125rem;
+}
+
+.stacked-gallery--preview .stacked-gallery__card-wrap {
+  transition:
+    transform 380ms cubic-bezier(0.22, 1, 0.36, 1),
+    filter 380ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.stacked-gallery--preview .stacked-gallery__end-spacer {
+  height: min(18vh, 7rem);
+}
+
+@media (min-width: 640px) {
+  .stacked-gallery--preview {
+    --stack-top: 1rem;
+    --stack-card-height: clamp(20rem, 54svh, 30rem);
+  }
+}
+
+@media (min-width: 640px) {
+  .stacked-gallery {
+    --stack-top: 1.5rem;
+    --stack-card-height: clamp(24rem, 68svh, 36rem);
+  }
+
+  .stacked-gallery__title {
+    font-size: 1.125rem;
+  }
+
+  .stacked-gallery__caption {
+    font-size: 0.875rem;
+  }
+}
+
 /*
  * Mobile bottom navigation (final)
  * Floating pill + elevated active circle. No SVG scoops, no ::before/::after wings.

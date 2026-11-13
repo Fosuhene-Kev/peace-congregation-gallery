@@ -3,9 +3,9 @@
 import { useState, useEffect, useCallback, useMemo } from "react"
 import { useSearchParams, useRouter } from "next/navigation"
 import { AppShell } from "@/components/gallery/app-shell"
+import { MediaHomepage } from "@/components/media-home/media-homepage"
 import { EventsCarousel } from "@/components/gallery/events-carousel"
 import { EventDetailView } from "@/components/gallery/event-detail-view"
-import { PhotoGrid } from "@/components/gallery/photo-grid"
 import { Lightbox } from "@/components/gallery/lightbox"
 import { SermonsPlaceholder } from "@/components/gallery/sermons-placeholder"
 import { NotificationsPanel } from "@/components/gallery/notifications-panel"
@@ -14,15 +14,8 @@ import {
   getPhotosForEvent,
   getSortedEvents,
 } from "@/lib/gallery-data"
+import { LAST_EVENT_ID } from "@/lib/media-home-data"
 import { isAppView, type AppView } from "@/lib/navigation"
-
-function EmptyGallery() {
-  return (
-    <div className="py-16 text-center">
-      <p className="text-muted-foreground">No photos available for this event yet.</p>
-    </div>
-  )
-}
 
 export function GalleryClient() {
   const searchParams = useSearchParams()
@@ -46,20 +39,20 @@ export function GalleryClient() {
     return getEventById(urlEventId)
   }, [urlEventId])
 
-  const homeEvent = useMemo(() => {
-    if (urlEventId) {
-      const fromUrl = getEventById(urlEventId)
-      if (fromUrl) return fromUrl
-    }
-    return sortedEvents[0]
-  }, [urlEventId, sortedEvents])
-
-  const galleryEvent = isEventDetail ? detailEvent : isHomeGallery ? homeEvent : undefined
+  const homePhotos = useMemo(
+    () => getPhotosForEvent(LAST_EVENT_ID),
+    [],
+  )
 
   const activePhotos = useMemo(() => {
-    if (!galleryEvent) return []
-    return getPhotosForEvent(galleryEvent.eventId)
-  }, [galleryEvent])
+    if (isEventDetail && detailEvent) {
+      return getPhotosForEvent(detailEvent.eventId)
+    }
+    if (isHomeGallery) {
+      return homePhotos
+    }
+    return []
+  }, [isEventDetail, detailEvent, isHomeGallery, homePhotos])
 
   const [lightboxOpen, setLightboxOpen] = useState(false)
   const [lightboxIndex, setLightboxIndex] = useState(0)
@@ -82,12 +75,12 @@ export function GalleryClient() {
         return
       }
       if (view === "home") {
-        updateUrl("home", sortedEvents[0]?.eventId)
+        updateUrl("home")
         return
       }
       updateUrl(view)
     },
-    [updateUrl, sortedEvents]
+    [updateUrl]
   )
 
   const handleEventOpen = useCallback(
@@ -162,27 +155,12 @@ export function GalleryClient() {
 
       {activeView === "notifications" && <NotificationsPanel />}
 
-      {isHomeGallery && galleryEvent && (
-        <div className="mx-auto w-full max-w-7xl">
-          <div className="mb-3 flex items-baseline justify-between gap-2 border-b border-border/60 pb-3">
-            <h1 className="text-base font-semibold text-foreground sm:text-lg">
-              {galleryEvent.eventName}
-            </h1>
-            <p className="shrink-0 text-xs text-muted-foreground">
-              {new Date(galleryEvent.eventDate).toLocaleDateString("en-US", {
-                month: "short",
-                day: "numeric",
-                year: "numeric",
-              })}
-            </p>
-          </div>
-
-          {activePhotos.length > 0 ? (
-            <PhotoGrid photos={activePhotos} onPhotoClick={handlePhotoClick} />
-          ) : (
-            <EmptyGallery />
-          )}
-        </div>
+      {isHomeGallery && (
+        <MediaHomepage
+          onExploreEvents={() => updateUrl("events")}
+          onOpenLastEvent={() => updateUrl("events", LAST_EVENT_ID)}
+          onPhotoClick={handlePhotoClick}
+        />
       )}
 
       {lightboxOpen && activePhotos.length > 0 && (
